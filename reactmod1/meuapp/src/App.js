@@ -1,36 +1,34 @@
 import React, {Component} from 'react';
+// import Membro from './eventos/membros.js'
+
+import Feed from './listas/'
 
 class App extends Component{
 
   constructor(props){
     super(props);
     this.state = {
-      nome: "Matheus",
-      contador: 0
+      feed: [
+        {id: 1, name: 'Wallace', idade: 15, curtidas: 25},
+        {id: 2, name: 'Julio', idade: 18, curtidas: 28},
+        {id: 3, name: 'Davi', idade: 19, curtidas: 35},
+        {id: 4, name: 'Lucas', idade: 23, curtidas: 85},
+        {id: 5, name: 'Pedro', idade: 17, curtidas: 1}
+      ]
     }
-    
-    this.somar = this.somar.bind(this);
-    this.subtrair = this.subtrair.bind(this);
-    
-  }
 
-
-  somar() {
-    let state = this.state
-    state.contador += 1
-    this.setState(state) 
-  }
-
-  subtrair() {
-    let state = this.state
-    state.contador -= 1
-    this.setState(state) 
   }
 
   render(){
     return(
       <div>
-        <button onClick={this.subtrair}>-</button>{this.state.contador}<button onClick={this.somar}>+</button>
+        {this.state.feed.map((item) => {
+          return(
+            <div>
+              <Feed key={item.id} name={item.name} idade={item.idade} curtidas={item.curtidas}></Feed>
+            </div>
+          )
+        })}
       </div>
     )
   }
