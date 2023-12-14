@@ -1,68 +1,51 @@
-import React, { Component } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 // import Membro from './eventos/membros.js'
 
-class App extends Component {
+function App(){
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      nome: '',
-      email: '',
-      senha: '',
-      sexo: '',
-      erro: ''
+  //DEFININDO AS STATES
+  const [tarefas, setTarefas] = useState([])
+  const [input, setInput] = useState([''])
+
+  //EXECUTA ASSIM QUE O COMPONENTE CARREGAR NA TELA
+  useEffect(() => {
+    const tarefasStorage = localStorage.getItem('tarefa')
+    if(tarefasStorage){
+      setTarefas(JSON.parse(tarefasStorage))
     }
+  }, [])
+  
 
-    this.cadastrar = this.cadastrar.bind(this)
+  //EXECUTA APÓS QUALQUER ALTERAÇÃO
+  useEffect(() => {
+    localStorage.setItem('tarefa', JSON.stringify(tarefas))
+  }, [tarefas])
 
-  }
+  //EXECUÇÃO INDIVIDUAL APÓS ALTERAÇÃO 
+  const totaltarefas = useMemo(() => tarefas.length, [tarefas]);
 
-  cadastrar(event) {
-    const {nome, email, senha, sexo} = this.state
+  const handleAdd = useCallback(() => {
+    setTarefas([...tarefas, input])
+  }, [input, tarefas])
 
-    if(nome === "" || email === "" || senha === "" || sexo === ""){
-      this.setState({erro: 'Campos vazios ou inválidos'})
-    }
-    else{
-      alert(`Nome: ${nome}\nE-mail: ${email}\nSenha: ${senha}\nSexo: ${sexo}\n`)
-    }
+  return(
+    <div>
+      <h1>oi</h1>
+      <ul>
+        {tarefas.map(tarefa => (
+          <li>{tarefa}</li>
+        ))}
+      </ul>
 
-    event.preventDefault();
+      <br/><br/>
 
-  }
+      <input type='text' onChange={e => setInput(e.target.value)}></input>
+      <button onClick={handleAdd}> Adicionar </button> <br/>
 
-  render() {
-    return (
-      <div>
-        <h1>Novo usuário</h1>
-        <form onSubmit={this.cadastrar}>
+      <p>Você tem: {totaltarefas}</p>
 
-          {this.state.erro && <p>{this.state.erro}</p>}
-
-          <label>Nome</label><br/>
-          <input type='text'
-            onChange={(e) => this.setState({ nome: e.target.value })}></input> <br/> <br/>
-
-          <label>E-mail</label><br/>
-          <input type='text'
-            onChange={(e) => this.setState({ email: e.target.value })}></input> <br/> <br/>
-
-          <label>Senha</label><br/>
-          <input type='password'
-          onChange={(e) => this.setState({ senha: e.target.value })}></input> <br/> <br/>
-          
-          <label>Sexo</label><br/>
-          <select value={this.state.sexo} onChange={(e) => this.setState({ sexo: e.target.value })}>
-            <option value="Masculino">Masculino</option>
-            <option value="Feminino">Feminino</option>
-        </select> <br/> <br/>
-
-        <button type='submit'>Enviar</button>
-
-        </form>
-      </div>
-    )
-  }
+    </div>
+  )
 }
 
 export default App;
