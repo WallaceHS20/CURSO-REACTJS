@@ -1,16 +1,32 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 // import Membro from './eventos/membros.js'
 
 function App(){
 
-  const [tarefas, setTarefas] = useState(['pagar dentista', 'estudar', 'dormir'])
-  const [nome] = useState('wallace')
+  //DEFININDO AS STATES
+  const [tarefas, setTarefas] = useState([])
   const [input, setInput] = useState([''])
 
-  function handleAdd(){
+  //EXECUTA ASSIM QUE O COMPONENTE CARREGAR NA TELA
+  useEffect(() => {
+    const tarefasStorage = localStorage.getItem('tarefa')
+    if(tarefasStorage){
+      setTarefas(JSON.parse(tarefasStorage))
+    }
+  }, [])
+  
+
+  //EXECUTA APÓS QUALQUER ALTERAÇÃO
+  useEffect(() => {
+    localStorage.setItem('tarefa', JSON.stringify(tarefas))
+  }, [tarefas])
+
+  //EXECUÇÃO INDIVIDUAL APÓS ALTERAÇÃO 
+  const totaltarefas = useMemo(() => tarefas.length, [tarefas]);
+
+  const handleAdd = useCallback(() => {
     setTarefas([...tarefas, input])
-    alert(tarefas)
-  }
+  }, [input, tarefas])
 
   return(
     <div>
@@ -20,11 +36,13 @@ function App(){
           <li>{tarefa}</li>
         ))}
       </ul>
-      <h3>{nome}</h3>
-      <br/><br/><br/>
+
+      <br/><br/>
 
       <input type='text' onChange={e => setInput(e.target.value)}></input>
-      <button onClick={handleAdd}> Adicionar </button>
+      <button onClick={handleAdd}> Adicionar </button> <br/>
+
+      <p>Você tem: {totaltarefas}</p>
 
     </div>
   )

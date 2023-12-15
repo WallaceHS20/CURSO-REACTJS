@@ -1,49 +1,47 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-// import Membro from './eventos/membros.js'
+// let url = 'https://sujeitoprogramador.com/rn-api/?api=posts';
 
-function App(){
+import './css/style.css'
 
-  //DEFININDO AS STATES
-  const [tarefas, setTarefas] = useState([])
-  const [input, setInput] = useState([''])
+function App() {
 
-  //EXECUTA ASSIM QUE O COMPONENTE CARREGAR NA TELA
+  const [nutri, setNutri] = useState([])
+
   useEffect(() => {
-    const tarefasStorage = localStorage.getItem('tarefa')
-    if(tarefasStorage){
-      setTarefas(JSON.parse(tarefasStorage))
+    function loadApi() {
+      let url = 'https://sujeitoprogramador.com/rn-api/?api=posts'
+      fetch(url)
+        .then((response) => response.json())
+        .then((json) => {
+          console.log('====================================');
+          setNutri(json)
+          console.log('====================================');
+        })
     }
+
+    loadApi();
+
   }, [])
-  
 
-  //EXECUTA APÓS QUALQUER ALTERAÇÃO
-  useEffect(() => {
-    localStorage.setItem('tarefa', JSON.stringify(tarefas))
-  }, [tarefas])
-
-  //EXECUÇÃO INDIVIDUAL APÓS ALTERAÇÃO 
-  const totaltarefas = useMemo(() => tarefas.length, [tarefas]);
-
-  const handleAdd = useCallback(() => {
-    setTarefas([...tarefas, input])
-  }, [input, tarefas])
-
-  return(
+  return (
     <div>
-      <h1>oi</h1>
-      <ul>
-        {tarefas.map(tarefa => (
-          <li>{tarefa}</li>
-        ))}
-      </ul>
-
-      <br/><br/>
-
-      <input type='text' onChange={e => setInput(e.target.value)}></input>
-      <button onClick={handleAdd}> Adicionar </button> <br/>
-
-      <p>Você tem: {totaltarefas}</p>
-
+      <header>
+        <h1>REACT NUTRICIONAL</h1>
+      </header>
+      <div className='corpo'>
+        {nutri.map((item) => {
+          return (
+            <article key={item.id}>
+              <h3>{item.titulo}</h3>
+              <div className='capa'>
+                <img src={item.capa}></img>
+              </div>
+              <p>{item.subtitulo}</p>
+              <a href={item.categoria}>Acessar</a>
+            </article>
+          )
+        })}
+      </div>
     </div>
   )
 }
